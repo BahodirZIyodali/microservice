@@ -1,0 +1,5 @@
+export {GoodsCreateResponse} from './goods-create.interfaces'
+export {GoodsDeleteresponse} from './goods-delete.interfaces'
+export {GooodsRetriveAllresponse} from './goods-retrive-all.interfaces'
+export {GoodsSaleresponse} from './goods-sale.interfaces'
+export {GoodsUpdateResponse} from './goods-update.interfaces'

@@ -1,0 +1,73 @@
+datasource db {
+    url = env("DATABASE_URL")
+    provider = "postgresql"
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+
+
+model Category {
+  id            String      @default(uuid()) @id @db.Uuid @map("id")
+  name          String      @map("name") @db.VarChar(50)
+  createdAt     DateTime?    @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime?   @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt     DateTime?   @map("deleted_at") @db.Timestamp(0)
+
+  subcategories Subcategory[]
+
+  @@map("category")
+}
+
+model Subcategory {
+  id          String      @default(uuid()) @id @db.Uuid @map("id")
+  name        String      @map("name") @db.VarChar(50)
+  categoryId  String      @map("category_id") @db.Uuid
+  createdAt   DateTime?   @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime?   @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt   DateTime?   @map("deleted_at") @db.Timestamp(0)
+
+  category    Category    @relation(fields: [categoryId], references: [id])
+  goods       Goods[]
+
+  @@map("subcategory")
+}
+
+model Goods {
+  id             String    @default(uuid()) @id @db.Uuid @map("id")
+  title          String    @map("title") @db.VarChar(30)
+  price          String    @map("price") @db.VarChar(50)
+  subcategoryId  String?   @map("subcategory_id") @db.Uuid
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamp(0)
+
+  subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
+  orders         Order[]
+
+  @@map("goods")
+}
+
+model User {
+  id           String      @id @default(uuid()) @map("id") @db.Uuid @unique
+  username     String      @map("username") @db.VarChar(200)
+  password     String      @map("password") @db.VarChar(200)
+  orders       Order[]
+  createdAt    DateTime?   @map("created_at") @db.Timestamp(0) @default(now())
+  updatedAt    DateTime?   @map("updated_at") @db.Timestamp(0) @updatedAt
+  deletedAt    DateTime?   @map("deleted_at") @db.Timestamp(0)
+
+  @@map("user")
+}
+
+model Order {
+  id        String      @id @default(uuid()) @map("id") @db.Uuid
+  goodsId   String      @map("goods_id") @db.Uuid
+  userId    String      @map("user_id") @db.Uuid
+  goods     Goods       @relation(fields: [goodsId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@map("order")
+}
